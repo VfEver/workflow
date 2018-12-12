@@ -9,5 +9,5 @@ import lombok.Data;
 public class Activity {
     private String workflowId;
     private String activityId;
-    private String process;
+    private String processName;
 }
