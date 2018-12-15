@@ -13,12 +13,25 @@ import java.util.Map;
  */
 @Data
 public class TransactionContext {
+    /**
+     * code + type唯一标识一个工作流
+     */
+    private String code;
+    private String type;
+    /**
+     * step标识此次请求步数
+     */
+    private int step;
     private Workflow workflow;
     private Activity currentActivity;
     private List<Activity> activities = new ArrayList<>(Constant.DEFAULT_SIZE);
     private List<Transition> transitions = new ArrayList<>(Constant.DEFAULT_SIZE);;
     private List<StopCondition> stopConditions = new ArrayList<>(Constant.DEFAULT_SIZE);
     private Map<String, Object> contextMap = new HashMap<>(Constant.DEFAULT_SIZE);
+    /**
+     * activity 执行历史记录
+     */
+    private List<Activity> activityHistory = new ArrayList<>(Constant.DEFAULT_SIZE);
 
     public void addActivity(Activity activity) {
         activities.add(activity);
@@ -31,6 +44,9 @@ public class TransactionContext {
     }
     public void putIntoMap (String key, Object value) {
         contextMap.put(key, value);
+    }
+    public void addActivityHistory (Activity activity) {
+        activityHistory.add(activity);
     }
 
 }
