@@ -6,6 +6,8 @@ import com.zys.workflow.Activity;
 import com.zys.workflow.TransactionContext;
 import com.zys.workflow.WorkflowConfig;
 
+import java.util.Map;
+
 /**
  * 引擎具体实现
  */
@@ -58,6 +60,19 @@ public class EngineImpl implements Engine {
     public void run() {
         Activity currentActivity = transactionContext.getCurrentActivity();
         Processor processor = Processors.getSpecProcessor(currentActivity.getProcessName());
-        processor.process();
+        processor.process(transactionContext);
+    }
+
+    private void setCurrentActivity(TransactionContext transactionContext) {
+        Map<String, Object> contextMap = transactionContext.getContextMap();
+        Object totalStep = contextMap.get("TotalStep");
+        if(totalStep == null ||(Integer)totalStep == 1) {
+            String firstActivityId = transactionContext.getWorkflow().getFirstActivityId();
+            Activity currentActivity = WorkflowConfig.getActivityById(firstActivityId);
+            if (currentActivity == null) {
+                throw new RuntimeException("first activity is null.");
+            }
+            transactionContext.setCurrentActivity(currentActivity);
+        }
     }
 }

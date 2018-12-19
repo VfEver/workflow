@@ -78,4 +78,13 @@ public class WorkflowConfig {
         }
         return tragetTransitions;
     }
+
+    public static Activity getActivityById (String activityId) {
+        for (Activity activity : activities) {
+            if (activity.getActivityId().equals(activityId)) {
+                return activity;
+            }
+        }
+        return null;
+    }
 }
