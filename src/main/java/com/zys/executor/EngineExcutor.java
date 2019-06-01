@@ -24,7 +24,7 @@ public class EngineExcutor {
         context.setType(type);
         context.setContextMap(Helper.Obj2Map(request));
         engine.setTransactionContext(context);
-
+        engine.buildComponent();
         engine.run();
     }
 

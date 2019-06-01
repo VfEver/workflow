@@ -1,6 +1,7 @@
 package com.zys.processor;
 
 import com.zys.constant.Constant;
+import com.zys.processor.impl.CallProcessor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,7 @@ import java.util.Map;
 public class Processors {
     private static Map<String, Processor> processorsMap = new HashMap<>(Constant.DEFAULT_SIZE);
     static {
-
-        registProcess("null", null);
+        registProcess("CallProcessor", new CallProcessor());
     }
     private static void registProcess (String processId, Processor processor) {
         processorsMap.put(processId, processor);

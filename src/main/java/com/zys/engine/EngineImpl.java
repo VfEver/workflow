@@ -9,6 +9,9 @@ import com.zys.workflow.WorkflowConfig;
 
 import java.util.Map;
 
+import static com.zys.constant.Constant.ENGINECURRENTSTEP;
+import static com.zys.constant.Constant.ENGINETOTALSTEP;
+
 /**
  * 引擎具体实现
  */
@@ -75,9 +78,26 @@ public class EngineImpl implements Engine {
 
     private void setExecuteStep() {
         //引擎总执行步数
-        transactionContext.getContextMap().put("EngineTotalStep", 1);
+        if (!transactionContext.getContextMap().containsKey(ENGINETOTALSTEP)) {
+            transactionContext.getContextMap().put(ENGINETOTALSTEP, 1);
+        }
         //引擎当前执行步数
-        transactionContext.getContextMap().put("EngineCurrentStep", 1);
+        transactionContext.getContextMap().put(ENGINECURRENTSTEP, 1);
+//        transactionContext.setStep();
+    }
+
+    private void addExecuteStep() {
+        //引擎总执行步数
+        Object engineTotalStep = transactionContext.getContextMap().get(ENGINETOTALSTEP);
+        //引擎当前执行步数
+        Object engineCurrentStep = transactionContext.getContextMap().get(ENGINECURRENTSTEP);
+
+        engineTotalStep = (Integer)engineTotalStep + 1;
+        engineCurrentStep = (Integer)engineCurrentStep + 1;
+        //引擎总执行步数
+        transactionContext.getContextMap().put(ENGINETOTALSTEP, engineTotalStep);
+        //引擎当前执行步数
+        transactionContext.getContextMap().put(ENGINECURRENTSTEP, engineCurrentStep);
     }
 
     /**
@@ -86,7 +106,7 @@ public class EngineImpl implements Engine {
      */
     private boolean endRun() {
         //判断是否到达终止条件
-        return true;
+        return false;
     }
 
     /**
@@ -94,13 +114,13 @@ public class EngineImpl implements Engine {
      */
     private void runOnce() {
         setCurrentActivity();
-        Processor processor = Processors.getSpecProcessor(transactionContext.getCurrentActivity().getProcessName());
+        Processor processor = Processors.getSpecProcessor(transactionContext.getCurrentActivity().getProcessId());
         processor.process(transactionContext);
     }
 
     private void setCurrentActivity() {
         Map<String, Object> contextMap = transactionContext.getContextMap();
-        Object totalStep = contextMap.get("EngineTotalStep");
+        Object totalStep = contextMap.get(ENGINETOTALSTEP);
         //说明是第一次进入
         if((Integer)totalStep == 1) {
             String firstActivityId = transactionContext.getWorkflow().getFirstActivityId();

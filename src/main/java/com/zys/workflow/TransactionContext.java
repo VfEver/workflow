@@ -4,7 +4,6 @@ import com.zys.constant.Constant;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class TransactionContext {
     private List<Activity> activities = new ArrayList<>(Constant.DEFAULT_SIZE);
     private List<Transition> transitions = new ArrayList<>(Constant.DEFAULT_SIZE);;
     private List<StopCondition> stopConditions = new ArrayList<>(Constant.DEFAULT_SIZE);
-    private Map<String, Object> contextMap = new HashMap<>(Constant.DEFAULT_SIZE);
+    private Map<String, Object> contextMap;
     /**
      * activity 执行历史记录
      */

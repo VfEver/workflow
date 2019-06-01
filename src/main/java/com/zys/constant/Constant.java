@@ -9,4 +9,7 @@ public class Constant {
     public static final String CONFIG_FILE = "file";
     public static final String CONFIG_DB = "db";
 
+    public static final String ENGINETOTALSTEP = "EngineTotalStep";
+    public static final String ENGINECURRENTSTEP = "EngineCurrentStep";
+
 }

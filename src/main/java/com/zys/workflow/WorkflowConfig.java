@@ -24,7 +24,7 @@ public class WorkflowConfig {
                 break;
             }
             default: {
-                initFromConfigFile();
+                initFromHardCode();
             }
         }
     }
@@ -41,6 +41,26 @@ public class WorkflowConfig {
     private static void initFromConfigDB () {
     }
 
+    /**
+     * 硬编码加载，测试使用
+     */
+    private static void initFromHardCode() {
+        Workflow workflow = new Workflow();
+        workflow.setWorkflowId("001");
+        workflow.setWorkflowName("test");
+        workflow.setCode("pay");
+        workflow.setType("direct");
+        workflow.setFirstActivityId("ali");
+        workflows.add(workflow);
+
+        Activity activity = new Activity();
+        activity.setActivityId("ali");
+        activity.setProcessId("CallProcessor");
+        activity.setWorkflowId("001");
+        activities.add(activity);
+
+    }
+
     public static Workflow getWorkflow (String code, String type) {
         for (Workflow workflow : workflows) {
             if (workflow.getCode().equals(code) && workflow.getType().equals(type)) {
@@ -53,7 +73,7 @@ public class WorkflowConfig {
     public static List<Activity> getActivities (String workflowId) {
         List<Activity> targetActivities = new ArrayList<>();
         for (Activity activity : activities) {
-            if (activity.getActivityId().equals(workflowId)) {
+            if (activity.getWorkflowId().equals(workflowId)) {
                 targetActivities.add(activity);
             }
         }
@@ -87,4 +107,5 @@ public class WorkflowConfig {
         }
         return null;
     }
+
 }
