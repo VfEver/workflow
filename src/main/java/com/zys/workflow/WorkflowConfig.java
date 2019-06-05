@@ -50,15 +50,33 @@ public class WorkflowConfig {
         workflow.setWorkflowName("test");
         workflow.setCode("pay");
         workflow.setType("direct");
-        workflow.setFirstActivityId("ali");
+        workflow.setFirstActivityId("call");
         workflows.add(workflow);
 
-        Activity activity = new Activity();
-        activity.setActivityId("ali");
-        activity.setProcessId("CallProcessor");
-        activity.setWorkflowId("001");
-        activities.add(activity);
+        Activity callActivity = new Activity();
+        callActivity.setActivityId("call");
+        callActivity.setProcessId("CallProcessor");
+        callActivity.setWorkflowId("001");
+        activities.add(callActivity);
 
+        Activity channelActivity = new Activity();
+        channelActivity.setActivityId("ali");
+        channelActivity.setProcessId("ChannelProcessor");
+        channelActivity.setWorkflowId("001");
+        activities.add(channelActivity);
+
+        StopCondition stopCondition = new StopCondition();
+        stopCondition.setWorkflowId("001");
+        stopCondition.setStopState("S");
+        stopCondition.setStopExpression("ChannelProcessor_State==S");
+        stopConditions.add(stopCondition);
+
+        Transition transition = new Transition();
+        transition.setActivityId(callActivity.getActivityId());
+        transition.setNextActivityId(channelActivity.getActivityId());
+        transition.setWorkflowId("001");
+        transition.setTransitionExpression("CallProcessor_State==S");
+        transitions.add(transition);
     }
 
     public static Workflow getWorkflow (String code, String type) {
