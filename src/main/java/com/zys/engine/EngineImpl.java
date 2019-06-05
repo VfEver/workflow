@@ -1,12 +1,13 @@
 package com.zys.engine;
 
+import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.Expression;
 import com.zys.exceptions.ActivityNotFoundException;
 import com.zys.processor.Processor;
 import com.zys.processor.Processors;
-import com.zys.workflow.Activity;
-import com.zys.workflow.TransactionContext;
-import com.zys.workflow.WorkflowConfig;
+import com.zys.workflow.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.zys.constant.Constant.ENGINECURRENTSTEP;
@@ -106,6 +107,16 @@ public class EngineImpl implements Engine {
      */
     private boolean endRun() {
         //判断是否到达终止条件
+
+        Map<String, Object> contextMap = transactionContext.getContextMap();
+        List<StopCondition> stopConditions = transactionContext.getStopConditions();
+        for (StopCondition stopCondition : stopConditions) {
+            Expression compiledExp = AviatorEvaluator.compile(stopCondition.getStopExpression());
+            boolean stop = (boolean)compiledExp.execute(contextMap);
+            if (stop) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -130,7 +141,19 @@ public class EngineImpl implements Engine {
             }
             transactionContext.setCurrentActivity(currentActivity);
         } else {  //非第一次进入，开始计算
+            List<Activity> activities = transactionContext.getActivities();
+            List<Transition> transitions = transactionContext.getTransitions();
+            for (Transition transition : transitions) {
+                Expression compiledExp = AviatorEvaluator.compile(transition.getTransitionExpression());
+                if ((boolean)compiledExp.execute(contextMap)) {
+                    for (Activity activity : activities) {
+                        if (activity.getActivityId().equals(transition.getActivityId())){
+                            transactionContext.setCurrentActivity(activity);
+                        }
+                    }
+                }
 
+            }
         }
     }
 
